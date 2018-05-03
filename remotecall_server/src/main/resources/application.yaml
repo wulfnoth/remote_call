@@ -1,0 +1,7 @@
+server:
+  port: 9999
+spring.http.multipart.maxFileSize: 100Mb
+spring.http.multipart.maxRequestSize: 100Mb
+evn:
+  JAVA_BIN: /usr/local/jdk8/bin
+  ANACONDA_BIN: /home/cloud/anaconda3/bin
