@@ -1,12 +1,13 @@
 package org.wulfnoth.rc.commons;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 /**
  * @author Young
  */
-public class ProcessUtils {
+public class RCProcess {
 
 	public static final String HEAD = "HEAD";
 
@@ -14,14 +15,22 @@ public class ProcessUtils {
 
 	public static final String COMPRESS = "COMPRESS";
 
-	private static String customENV = "";
-	static {
+	private final String logDir;
+	private final String customENV;
+
+	public RCProcess(String logDir) {
 		StringJoiner sj = new StringJoiner(":");
 		Configuration.getStrings("env").forEach(sj::add);
 		customENV = sj.toString();
+
+		this.logDir = logDir;
 	}
 
-	public static ProcessMessage runPython(String file, String... args) throws IOException {
+	public ProcessMessage runSpark(String file, String... args) throws IOException {
+		return null;
+	}
+
+	public ProcessMessage runPython(String file, String... args) throws IOException {
 		List<String> argsList = new ArrayList<>();
 		argsList.add("python");
 		argsList.add(file);
@@ -35,7 +44,7 @@ public class ProcessUtils {
 		return runBackground(sj.toString());
 	}
 
-	public static ProcessMessage runShellCMD(String c, String file) throws IOException {
+	public ProcessMessage runShellCMD(String c, String file) throws IOException {
 		String cmd = null;
 		switch (c) {
 			case HEAD:
@@ -55,9 +64,9 @@ public class ProcessUtils {
 		return processMessage;
 	}
 
-	private static ProcessMessage runBackground(String cmd) throws IOException {
+	private ProcessMessage runBackground(String cmd) throws IOException {
 
-		String tempFile = System.currentTimeMillis() + ".out";
+		String tempFile = logDir + File.separator + System.currentTimeMillis() + ".out";
 		cmd = String.format("nohup %s > %s 2>&1 &", cmd, tempFile);
 		ProcessMessage processMessage = new ProcessMessage(tempFile);
 		run(cmd, processMessage);
@@ -65,9 +74,8 @@ public class ProcessUtils {
 		return processMessage;
 	}
 
-	private static void run(String cmd, ProcessMessage msg) throws IOException {
+	private void run(String cmd, ProcessMessage msg) throws IOException {
 
-		// 构建ProcessBuilder
 
 		ProcessBuilder builder = new ProcessBuilder("/bin/sh", "-c", cmd);
 		Map<String, String> env = builder.environment();
@@ -85,9 +93,6 @@ public class ProcessUtils {
 		}
 		scanner.close();
 		errorScanner.close();
-	}
-
-	public static void main(String[] args) throws IOException {
 	}
 
 }
